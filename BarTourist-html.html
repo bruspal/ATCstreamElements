@@ -1,0 +1,34 @@
+<link href="https://fonts.googleapis.com/css?family=Karla:400,700" rel="stylesheet">
+<style class="text/css">
+#progress #bar {
+  width: {{bar_width}}px;
+  background-color: {{fill_color_bg}};
+}
+#progress label{
+  max-width: {{bar_width}}px;
+}
+  
+#progress #bar .loading {
+  background: linear-gradient(180deg, {{fill_color}} 0%, {{fill_color2}} 75%, {{fill_color3}} 100%);
+  color: {{fill_color_label}};
+}
+#progress #bar .loading .amount {
+  color: {{fill_color_current}};
+}
+#progress #bar .endgame .amount {
+  color: {{fill_color_goal}};
+}
+</style>
+<div id="overlay">
+  <div id="progress">
+    <div id="bar">
+      <span class="endgame"><span class="amount">0</span></span>
+      <div class="loading"><span>{{main_label}}&nbsp;</span><span class="amount">0</span>&nbsp;<span id="percentSymbol">%&nbsp;</span></div>
+    </div>
+  </div>
+  <!-- A supprimer de la -->
+  <pre id="debug">
+
+  </pre>
+  <!-- a de la -->	
+</div>
