@@ -1,0 +1,11 @@
+* {
+    font-family: 'Montserrat', sans-serif;
+    color: black;
+    font-size: 14px;
+    overflow: hidden;
+}
+
+label {
+  width: 70px;
+  display: inline-block;
+}
