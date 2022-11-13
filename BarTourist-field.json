@@ -1,0 +1,52 @@
+{
+    "bar_width": {
+        "type": "number",
+        "label": "Largeur de la barre",
+        "value": 750
+    },
+    "main_label": {
+        "type": "text",
+        "label": "Texte dans la barre de chargement",
+        "value": "mini Sub Goal"
+    },
+    "fill_color_label": {
+        "type": "colorpicker",
+        "label": "Couleur du texte",
+        "value": "white"
+    },
+    "fill_color": {
+        "type": "colorpicker",
+        "label": "1ère Couleur de la barre de chargement",
+        "value": "blue"
+    },
+    "fill_color2": {
+        "type": "colorpicker",
+        "label": "2eme Couleur de la barre de chargement",
+        "value": "blue"
+    },
+    "fill_color3": {
+        "type": "colorpicker",
+        "label": "3eme Couleur de la barre de chargement",
+        "value": "blue"
+    },
+    "border_color": {
+        "type": "colorpicker",
+        "label": "Couleur du Contour",
+        "value": "blue"
+    },
+    "fill_color_bg": {
+        "type": "colorpicker",
+        "label": "Couleur du fond",
+        "value": "grey"
+    },
+    "fill_color_goal": {
+        "type": "colorpicker",
+        "label": "Couleur Sub Goal",
+        "value": "white"
+    },
+    "fill_color_current": {
+        "type": "colorpicker",
+        "label": "Couleur Sub Actuel",
+        "value": "white"
+    }
+}

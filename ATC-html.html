@@ -1,15 +1,18 @@
 <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
 <div class="main-container" style="background-color: #AAAAAA; padding: 15px; border-radius: 15px">
-    <form>
-        <label>Prime</label><input type="number" value="0" id="subPrime"><span id="dollarsByPrime"></span> $<br>
-        <label>Gifted</label><input type="number" value="0" id="subGifted"><span id="dollarsByGifted"></span> $<br>
-        <label>T1</label><input type="number" value="0" id="subT1"><span id="dollarsByT1"></span> $<br>
-        <label>T2</label><input type="number" value="0" id="subT2"><span id="dollarsByT2"></span> $<br>
-        <label>T3</label><input type="number" value="0" id="subT3"><span id="dollarsByT3"></span> $<br>
-        <button type="button" id="updateGoal">Mettre à jour</button>
-        <button type="button" id="reset">Reset</button>
-        <button type="button" id="synchronise">Synchronise</button>
-    </form>
+    <label>Prime</label><input type="number" value="0" id="subPrime"><span id="dollarsByPrime"></span> $<br>
+    <label>Gifted</label><input type="number" value="0" id="subGifted"><span id="dollarsByGifted"></span> $<br>
+    <label>T1</label><input type="number" value="0" id="subT1"><span id="dollarsByT1"></span> $<br>
+    <label>T2</label><input type="number" value="0" id="subT2"><span id="dollarsByT2"></span> $<br>
+    <label>T3</label><input type="number" value="0" id="subT3"><span id="dollarsByT3"></span> $<br>
+    <br>
+    <label>Cheers</label><input type="number" value="0" id="cheers"><span id="dollarsByCheers"></span> $<br>
+    <br>
+    <label>Tip</label><input type="number" value="0" id="tips"> $<br>
+
+    <button type="button" id="updateGoal">Mettre à jour</button>
+    <button type="button" id="reset">Reset</button>
+    <button type="button" id="synchronise">Synchronise</button>
     <hr>
     <h2>Stats</h2>
     <table>
@@ -41,6 +44,14 @@
             <tr>
                 <td>Montant Tips</td>
                 <td><span id="totalTipsDollarsStat">0</span></td>
+            </tr>
+            <tr>
+                <td>Objectif</td>
+                <td><span id="objectifStat">0</span></td>
+            </tr>
+            <tr>
+                <td> %Objectif</td>
+                <td><span id="objectifPercentStat">0</span></td>
             </tr>
         </tbody>
     </table>

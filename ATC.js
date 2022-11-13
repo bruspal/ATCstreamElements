@@ -59,6 +59,8 @@ let widgets = {
     subT1: null,
     subT2: null,
     subT3: null,
+    cheers: null,
+    tips: null
 }
 
 /*
@@ -80,10 +82,6 @@ window.addEventListener('onWidgetLoad', function (obj) {
     console.log(SEdata);
     console.log(fields);
 
-    // TODO : Init avec des fields
-    widgetData.objectif = 800; // prendre le field
-    dollarBySubPoint = 1.36;
-    dollarByCheers = 0.01;
 
     // Récupération des données de la DB streamElement
     SE_API.store.get(instanceName).then((ret) => {
@@ -93,10 +91,17 @@ window.addEventListener('onWidgetLoad', function (obj) {
             widgetData.totalSubsSE = totalSubs;
             widgetData.cheers = cheers;
             widgetData.tips = tips;
+            widgetData.objectif = fields.objectif;
+            dollarBySubPoint = fields.dollarsBySubPoint;
+            dollarByCheers = fields.dollarsByCheer;
             saveData();
         } else {
             // Chargement de l'instance
             widgetData = ret;
+            // Mise à jour des champs avec les données des fields
+            widgetData.objectif = fields.objectif;
+            dollarBySubPoint = fields.dollarsBySubPoint;
+            dollarByCheers = fields.dollarsByCheer;
         }
     }).then(function(){
         if (totalSubs != widgetData.totalSubs) {
@@ -104,6 +109,12 @@ window.addEventListener('onWidgetLoad', function (obj) {
         }
         calculData();
         updateUi();
+        // On demande un refresh aux widgetsLié
+        /*
+        debugger;
+        let eventName = instanceName+'_refresh';
+        SE_API.sendMessage(eventName, true).then((ret) => {console.log(ret)});
+        */
     });
 });
 
@@ -164,7 +175,7 @@ window.addEventListener('onEventReceived', function (obj) {
 });
 
 function calculData() {
-    debugger;
+    //debugger;
     // Calcul $ cheer
     widgetData.cheersDollars = round(widgetData.cheers * dollarByCheers);
     // calcul subpoints
@@ -207,24 +218,25 @@ function updateUi() {
     $('#totalCheersStat').text(widgetData.cheers);
     $('#totalCheersDollarsStat').text(widgetData.cheersDollars);
     $('#totalTipsDollarsStat').text(widgetData.tips);
+    $('#objectifStat').text(widgetData.objectif);
+    $('#objectifPercentStat').text(widgetData.percentObjectif);
 
     $('#dollarsByPrime').text(widgetData.subPrimeDollars);
     $('#dollarsByGifted').text(widgetData.subGiftedDollars);
     $('#dollarsByT1').text(widgetData.subT1Dollars);
     $('#dollarsByT2').text(widgetData.subT2Dollars);
     $('#dollarsByT3').text(widgetData.subT3Dollars);
+    $('#dollarsByCheers').text(widgetData.cheersDollars);
 
     // Remplissage des widgets
-    widgets.subPrime = $("#subPrime");
-    widgets.subPrime.val(widgetData.subPrime);
-    widgets.subGifted = $("#subGifted");
-    widgets.subGifted.val(widgetData.subGifted);
-    widgets.subT1 = $("#subT1");
-    widgets.subT1.val(widgetData.subT1);
-    widgets.subT2 = $("#subT2");
-    widgets.subT2.val(widgetData.subT2);
-    widgets.subT3 = $("#subT3");
-    widgets.subT3.val(widgetData.subT3);
+    $("#subPrime").val(widgetData.subPrime);
+    $("#subGifted").val(widgetData.subGifted);
+    $("#subT1").val(widgetData.subT1);
+    $("#subT2").val(widgetData.subT2);
+    $("#subT3").val(widgetData.subT3);
+    $("#cheers").val(widgetData.cheers);
+    $("#tips").val(widgetData.tips);
+
 }
 
 function round(nombre) {
@@ -234,11 +246,13 @@ function round(nombre) {
 /* Interactivité */
 // Update
 $("#updateGoal").click(function () {
-    widgetData.subPrime = parseInt(widgets.subPrime.val());
-    widgetData.subGifted = parseInt(widgets.subGifted.val());
-    widgetData.subT1 = parseInt(widgets.subT1.val());
-    widgetData.subT2 = parseInt(widgets.subT2.val());
-    widgetData.subT3 = parseInt(widgets.subT3.val());
+    widgetData.subPrime = parseInt($("#subPrime").val());
+    widgetData.subGifted = parseInt($("#subGifted").val());
+    widgetData.subT1 = parseInt($("#subT1").val());
+    widgetData.subT2 = parseInt($("#subT2").val());
+    widgetData.subT3 = parseInt($("#subT3").val());
+    widgetData.cheers = parseInt($("#cheers").val());
+    widgetData.tips = parseFloat($("#tips").val());
     calculData();
     saveData();
     updateUi();
@@ -251,6 +265,8 @@ $("#reset").click(function () {
     widgetData.subT1 = 0;
     widgetData.subT2 = 0;
     widgetData.subT3 = 0;
+    widgetData.cheers = 0;
+    widgetData.tips = 0.0;
     calculData();
     saveData();
     updateUi();

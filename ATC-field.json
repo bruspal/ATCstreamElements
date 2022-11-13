@@ -1,0 +1,23 @@
+{
+    "objectif": {
+        "type": "number",
+        "label": "Objectif",
+        "value": 800,
+        "min": 1
+    },
+    "dollarsBySubPoint": {
+        "type": "number",
+        "label": "Montant par subPoint",
+        "value": 1.36
+    },
+    "dollarsByCheer": {
+        "type": "number",
+        "label": "Montant par cheer",
+        "value": 0.01
+    },
+    "instanceName": {
+        "type": "text",
+        "label": "Nom de l'instance (placeholder)",
+        "value": "daTouriste"
+    }
+}

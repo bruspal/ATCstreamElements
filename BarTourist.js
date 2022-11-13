@@ -43,7 +43,6 @@ function loadData() {
     })
 }
 
-//** CALCULATION FUNCTIONS FOR MINI SUB GOAL BAR
 function reloadGoal() {
   let percent = widgetData.percentObjectif;
   // Update goal bar
@@ -53,7 +52,9 @@ function reloadGoal() {
     });
   $('#progress .loading .amount').text(percent + '%' );
   $('#progress .endgame .amount').text(percent + "% Objectif" );
+  /*
   $('#debug').text(
     JSON.stringify(widgetData, null, 2)
   )
+  */
 }
