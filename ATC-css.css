@@ -1,11 +1,43 @@
 * {
-    font-family: 'Montserrat', sans-serif;
-    color: black;
-    font-size: 14px;
-    overflow: hidden;
+  font-family: 'Montserrat', sans-serif;
+  color: black;
+  font-size: 14px;
+  overflow: hidden;
+}
+
+table tr td {
+  vertical-align: top;
 }
 
 label {
-  width: 70px;
+  width: 100px;
   display: inline-block;
+}
+
+.displayValue {
+  font-weight: bold;
+  display: inline-block;
+  width: 50px;
+  text-align: right;
+  margin: 0;
+  padding: 1px;
+  line-height: 1;
+  position: relative;
+  top: 5px;
+}
+
+#loading {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-size: 50px;
+  font-weight: bolder;
+  color: red;
+  z-index: 100;
+  background-color: rgba(255,255,255,0.8);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding-top: 50px;
 }

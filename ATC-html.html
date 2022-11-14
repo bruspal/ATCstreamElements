@@ -1,14 +1,26 @@
 <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
 <div class="main-container" style="background-color: #AAAAAA; padding: 15px; border-radius: 15px">
-    <label>Prime</label><input type="number" value="0" id="subPrime"><span id="dollarsByPrime"></span> $<br>
-    <label>Gifted</label><input type="number" value="0" id="subGifted"><span id="dollarsByGifted"></span> $<br>
-    <label>T1</label><input type="number" value="0" id="subT1"><span id="dollarsByT1"></span> $<br>
-    <label>T2</label><input type="number" value="0" id="subT2"><span id="dollarsByT2"></span> $<br>
-    <label>T3</label><input type="number" value="0" id="subT3"><span id="dollarsByT3"></span> $<br>
-    <br>
-    <label>Cheers</label><input type="number" value="0" id="cheers"><span id="dollarsByCheers"></span> $<br>
-    <br>
-    <label>Tip</label><input type="number" value="0" id="tips"> $<br>
+    <div id="loading" style="display: none">LOADING</div>
+    <table>
+        <tr>
+            <td>
+                <label>Prime</label><input type="number" value="0" id="subPrime"><span class="displayValue" id="dollarsByPrimeStat"></span> $<br>
+                <label>Gifted</label><input type="number" value="0" id="subGifted"><span class="displayValue" id="dollarsByGiftedStat"></span> $<br>
+                <label>T1</label><input type="number" value="0" id="subT1"><span class="displayValue" id="dollarsByT1Stat"></span> $<br>
+                <label>T2</label><input type="number" value="0" id="subT2"><span class="displayValue" id="dollarsByT2Stat"></span> $<br>
+                <label>T3</label><input type="number" value="0" id="subT3"><span class="displayValue" id="dollarsByT3Stat"></span> $<br>
+                <label>Cheers</label><input type="number" value="0" id="cheers"><span class="displayValue" id="dollarsByCheersStat"></span> $<br>
+                <label>Tip</label><input type="number" value="0" id="tips"> $<br>
+            </td>
+            <td style="padding-left: 15px">
+                <label>Objectif</label><input type="number" value="0" id="objectif"><br>
+                <label>$ / subPoints</label><input type="number" value="0" id="dollarsBySubPoints"><br>
+                <label>$ / cheers</label><input type="number" value="0" id="dollarsByCheers"><br>
+                <label>$ Total</label><span class="displayValue" id="totalDollarsStat">0</span><br>
+                <label>% Objectif</label><span class="displayValue" id="objectifPercentStat">0</span>
+            </td>
+        </tr>
+    </table>
 
     <button type="button" id="updateGoal">Mettre à jour</button>
     <button type="button" id="reset">Reset</button>
@@ -23,35 +35,15 @@
         <tbody>
             <tr>
                 <td>subPoint</td>
-                <td><span id="subPointStat">0</span></td>
+                <td><span class="displayValue" id="subPointStat">0</span></td>
             </tr>
             <tr>
                 <td>Total subs</td>
-                <td><span id="totalSubsStat">0</span></td>
+                <td><span class="displayValue" id="totalSubsStat">0</span></td>
             </tr>
             <tr>
                 <td>montant Subs</td>
-                <td><span id="subDollarsStat">0</span></td>
-            </tr>
-            <tr>
-                <td>Total cheers</td>
-                <td><span id="totalCheersStat">0</span></td>
-            </tr>
-            <tr>
-                <td>Montant cheers</td>
-                <td><span id="totalCheersDollarsStat">0</span></td>
-            </tr>
-            <tr>
-                <td>Montant Tips</td>
-                <td><span id="totalTipsDollarsStat">0</span></td>
-            </tr>
-            <tr>
-                <td>Objectif</td>
-                <td><span id="objectifStat">0</span></td>
-            </tr>
-            <tr>
-                <td> %Objectif</td>
-                <td><span id="objectifPercentStat">0</span></td>
+                <td><span class="displayValue" id="subDollarsStat">0</span></td>
             </tr>
         </tbody>
     </table>
