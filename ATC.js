@@ -259,7 +259,7 @@ function log(listener, data) {
     $('#log').val($('#log').val() + new Date().toISOString() + '\t' + listener + '\t' + JSON.stringify(data) + '\n');
     scrollDown('#log');
     logsArray.push({
-      'listerner': listerner,
+      'listener': listener,
       'data': data
     })
   }
