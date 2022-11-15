@@ -1,5 +1,5 @@
 // Mode debug mettre true pour activer le mode debug, mettre false sinon
-let debugMode = false;
+let debugMode = true;
 
 // Principe : Tour de controle qui pilote l'affichage
 // * tout stocker dans SE_API.store
@@ -11,6 +11,9 @@ let fields = null;
 let APIToken = '';
 let channelName = '';
 let logsArray = [];
+
+// Gestion des timeouts
+let timeoutUpdate = false;
 
 // A mettre en fields
 let instanceName = 'touristATC';
@@ -62,6 +65,7 @@ window.addEventListener('onWidgetLoad', function (obj) {
   if (debugMode) debugger;
   let updateAtLaunch = false;
   SEdata = obj.detail.session.data;
+  SEdataUpdated = SEdata;
   fields = obj.detail.fieldData;
   APIToken = obj.detail.channel.apiToken;
   channelName = obj.detail.channel.username;
@@ -140,7 +144,6 @@ window.addEventListener('onEventReceived', function (obj) {
 
       widgetData[tiersSub] += 1;
       widgetData.totalSubs += 1;
-      widgetData.totalSubsSE += 1;
       calculData();
       saveData();
       updateUi();
@@ -166,7 +169,10 @@ window.addEventListener('onEventReceived', function (obj) {
   }
 });
 
-
+/*
+ A chaque mise a jour de la session on store les info dans SEdataUpdated
+ TODO : SEdata devient inutil
+ */
 window.addEventListener('onSessionUpdate', function (obj) {
   if (debugMode) debugger;
   console.log(obj);
@@ -174,6 +180,9 @@ window.addEventListener('onSessionUpdate', function (obj) {
   // log('session-update', SEdataUpdated);
 });
 
+/*
+Calcul des valeurs en fonction des infos
+*/
 function calculData() {
   if (debugMode) debugger;
   // Calcul $ cheer
@@ -202,7 +211,9 @@ function calculData() {
   );
 }
 
-
+/*
+Sauvegarde des infos dans la DB de SE
+*/
 function saveData(forceDate) {
   if (debugMode) debugger;
   if (forceDate === undefined) {
@@ -211,16 +222,45 @@ function saveData(forceDate) {
     widgetData.dateLastWrite = forceDate;
   }
   SE_API.store.set(instanceName, widgetData);
+  // On envois le message 'update' 500ms apres le dernier event
+  if (timeoutUpdate !== false) clearTimeout(timeoutUpdate);
+  timeoutUpdate = setTimeout(() => {
+    sendMessage('update', {'truc': 'pwet'}, {'opt': 'ion'});
+  }, 1000);
 }
 
-function sendMessage(message, data) {
+/*
+Envois un message (HACK de SE_API.store.set)
+*/
+function sendMessage(message, data, options) {
+  if (debugMode) debugger;
+  options = options || {};
+  data = data || {};
   message = instanceName + '_' + message;
   SE_API.store.set(message, {
     custom: true,
-    payload: data
+    payload: data,
+    'options': options
   })
 }
 
+/*
+Attache du code a la recetion d'un message
+*/
+function receiveMessage(message, callback) {
+  message = instanceName + '_' + message;
+  SE_API.store.get(message).then((ret) => {
+    if (ret === null) {
+      // queedalle
+    } else {
+      callback(ret.payload, ret.options);
+    }
+  })
+}
+
+/*
+Mise a jour de l'interface
+*/
 function updateUi() {
   //    console.log(widgetData);
   //    return;
@@ -254,6 +294,9 @@ function updateUi() {
   $('#dollarsByCheers').val(widgetData.dollarsByCheers);
 }
 
+/*
+Log des events dans la zone log, ignore les events de type 'kvstore:update' et 'event:test'
+*/
 function log(listener, data) {
   if (listener != 'event:test' && listener != 'kvstore:update') {
     $('#log').val($('#log').val() + new Date().toISOString() + '\t' + listener + '\t' + JSON.stringify(data) + '\n');
@@ -265,12 +308,18 @@ function log(listener, data) {
   }
 }
 
+/*
+Log les subgift dans la zone gifteurs
+*/
 function logGift(data) {
   let txt = new Date().toISOString() + '\t' + data.name + '\t' + data.amount + '\t' + data.tier + '\t';
   $('#logGift').val($('#logGift').val() + txt + '\n');
   scrollDown('#logGift');
 }
 
+/*
+log les subs dans la zone subs
+*/
 function logSub(data) {
   let txt = new Date().toISOString() + '\t' + data.name + '\t' + data.amount + '\t' + data.tier + '\t';
   if (data.gifted) {
@@ -282,11 +331,17 @@ function logSub(data) {
   scrollDown('#logSub');
 }
 
+/*
+Scroll en bas des textarea idntifié par elString
+*/
 function scrollDown(elString) {
   let el = $(elString)[0];
   el.scrollTop = el.scrollHeight;
 }
 
+/*
+Arrondis a 2 decimal
+*/
 function round(nombre) {
   return Math.round((nombre + Number.EPSILON) * 100) / 100;
 }
@@ -296,25 +351,59 @@ function round(nombre) {
  */
 function synchronise() {
   if (debugMode) debugger;
+  let updated = false;
   /*
-  let url = 'https://api.streamelements.com/kappa/v2/sessions/' + channelName;
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + APIToken
-    },
-    mode: 'cors',
-    cache: 'no-cache'
-  }).then((response) => {
-    if (debugMode) debugger;
-    console.log(response);
-  }).catch((error) => {
-    if (debugMode) debugger;
-    console.log(error);
-  });
+  SEdataUpdated["subscriber-recent"] = dataDebug;
+  SEdataUpdated['subscriber-month'].count = 25;
   */
-  //if (widgetData.totalSubs != SEdataUpdated)
+  if (widgetData.totalSubs != SEdataUpdated['subscriber-month'].count) {
+    // On met a jour tous les subs en T1 puis on déplace
+    updated = true;
+    widgetData.totalSubsSE = SEdataUpdated['subscriber-month'].count;
+    widgetData.subPrime = 0;
+    widgetData.subGifted = 0;
+    widgetData.subT1 = SEdataUpdated['subscriber-month'].count;
+    widgetData.subT2 = 0;
+    widgetData.subT3 = 0;
+
+    // On boucle les derniers subs
+    let tabLen = SEdataUpdated["subscriber-recent"].length;
+    for (let idx = 0; idx < tabLen; idx++) {
+      data = SEdataUpdated["subscriber-recent"][idx];
+      switch (data.tier) {
+        case 'prime':
+          widgetData.subPrime++;
+          widgetData.subT1--;
+          break;
+        case '2000':
+          widgetData.subT2++;
+          widgetData.subT1--;
+          break;
+        case '3000':
+          widgetData.subT3++;
+          widgetData.subT1--;
+          break;
+      }
+    }
+  }
+
+  if (widgetData.cheers != SEdataUpdated['cheer-month'].amount) {
+    updated = true;
+    widgetData.cheers = SEdataUpdated['cheer-month'].amount;
+  }
+
+  if (widgetData.tips != SEdataUpdated['tip-month'].amount) {
+    updated = true;
+    widgetData.tips = SEdataUpdated['tip-month'].amount;
+  }
+
+  if (updated) {
+    calculData();
+    saveData();
+    updateUi();
+  } else {
+    alert('rien à synchroniser');
+  }
 }
 
 /* Interactivité */
@@ -349,6 +438,7 @@ $("#reset").click(function () {
   updateUi();
 });
 
+// Syncronise
 $("#synchronise").click(() => {
   synchronise();
 });
