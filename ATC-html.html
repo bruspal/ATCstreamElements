@@ -26,25 +26,49 @@
     <button type="button" id="reset">Reset</button>
     <button type="button" id="synchronise">Synchronise</button>
     <hr>
-    <h2>Stats</h2>
     <table>
-        <thead>
-            <th>Données</th>
-            <th>Nombre</th>
-        </thead>
-        <tbody>
-            <tr>
-                <td>subPoint</td>
-                <td><span class="displayValue" id="subPointStat">0</span></td>
-            </tr>
-            <tr>
-                <td>Total subs</td>
-                <td><span class="displayValue" id="totalSubsStat">0</span></td>
-            </tr>
-            <tr>
-                <td>montant Subs</td>
-                <td><span class="displayValue" id="subDollarsStat">0</span></td>
-            </tr>
-        </tbody>
+        <tr>
+            <th><h2>Stats</h2></th>
+            <th>Subs</th>
+            <th>Gifteurs</th>
+        </tr>
+        <tr>
+            <td>
+                <table>
+                    <thead>
+                        <th>Données</th>
+                        <th>Nombre</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>subPoint</td>
+                            <td><span class="displayValue" id="subPointStat">0</span></td>
+                        </tr>
+                        <tr>
+                            <td>Total subs</td>
+                            <td><span class="displayValue" id="totalSubsStat">0</span></td>
+                        </tr>
+                        <tr>
+                            <td>montant Subs</td>
+                            <td><span class="displayValue" id="subDollarsStat">0</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td>
+                <textarea id="logSub" cols="45" rows="10"></textarea>
+            </td>
+            <td>
+                <textarea id="logGift" cols="45" rows="10"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <th colspan="3">Log</th>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <textarea id="log" cols="115" rows="10"></textarea>
+            </td>
+        </tr>
     </table>
 </div>

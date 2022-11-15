@@ -1,13 +1,19 @@
+// Mode debug mettre true pour activer le mode debug, mettre false sinon
+let debugMode = false;
+
 // Principe : Tour de controle qui pilote l'affichage
 // * tout stocker dans SE_API.store
 // * comparer avec les data de SE/TWITCH pour resynchroniser les subs
 // Variables générique
 let SEdata = null;
+let SEdataUpdated = null;
 let fields = null;
+let APIToken = '';
+let channelName = '';
+let logsArray = [];
 
 // A mettre en fields
 let instanceName = 'touristATC';
-
 
 // Valeur en subPoint par type de sub
 const valSubPoint = {
@@ -53,10 +59,13 @@ Widget Init :
 - recaler les sub dans les widgetData si necessaire.
  */
 window.addEventListener('onWidgetLoad', function (obj) {
-  //debugger;
+  if (debugMode) debugger;
   let updateAtLaunch = false;
-  SEdata = obj["detail"]["session"]["data"];
-  fields = obj["detail"]["fieldData"];
+  SEdata = obj.detail.session.data;
+  fields = obj.detail.fieldData;
+  APIToken = obj.detail.channel.apiToken;
+  channelName = obj.detail.channel.username;
+
   /*
   console.log(SEdata);
   console.log(fields);
@@ -80,10 +89,14 @@ window.addEventListener('onWidgetLoad', function (obj) {
   }).then(function () {
     calculData();
     updateUi();
+    $('#log').val('Date\tListener\tData\r\n');
+    $('#logGift').val('Date\tNom\tQte\tType\r\n');
+    $('#logSub').val('Date\tNom\tNb mois\tType\tgift\tgifteur\r\n');
+
     $('#loading').fadeOut();
     // On demande un refresh aux widgets lié
     /*
-    debugger;
+    if(debugMode) debugger;
     let eventName = instanceName+'_refresh';
     SE_API.sendMessage(eventName, true).then((ret) => {console.log(ret)});
     */
@@ -99,37 +112,44 @@ on sauve
 */
 window.addEventListener('onEventReceived', function (obj) {
   const listener = obj.detail.listener;
-  const event = obj["detail"]["event"];
+  const event = obj.detail.event;
+  log(listener, event);
   // Traitement des subs
   if (listener == 'subscriber-latest') {
-    //debugger;
-    if (event["tier"] == "prime") {
-      if (!!event.gifted || !!event.bulkGifted) {
-        tiersSub = "subGifted";
-      } else {
-        tiersSub = "subPrime";
+    if (debugMode) debugger;
+    if (!!event.bulkGifted) {
+      logGift(event);
+    } else {
+      logSub(event);
+      if (event.tier == "prime") {
+        if (!!event.gifted) {
+          tiersSub = "subGifted";
+        } else {
+          tiersSub = "subPrime";
+        }
       }
+      if (event.tier == "1000") {
+        tiersSub = "subT1";
+      }
+      if (event.tier == "2000") {
+        tiersSub = "subT2";
+      }
+      if (event.tier == "3000") {
+        tiersSub = "subT3";
+      }
+
+      widgetData[tiersSub] += 1;
+      widgetData.totalSubs += 1;
+      widgetData.totalSubsSE += 1;
+      calculData();
+      saveData();
+      updateUi();
     }
-    if (event["tier"] == "1000") {
-      tiersSub = "subT1";
-    }
-    if (event["tier"] == "2000") {
-      tiersSub = "subT2";
-    }
-    if (event["tier"] == "3000") {
-      tiersSub = "subT3";
-    }
-    widgetData[tiersSub] += parseInt(event.amount);
-    widgetData.totalSubs += parseInt(event.amount);
-    widgetData.totalSubsSE += parseInt(event.amount);
-    calculData();
-    saveData();
-    updateUi();
   }
 
   // Traitement cheer
   if (listener == 'cheer-latest') {
-    //debugger;
+    if (debugMode) debugger;
     widgetData.cheers += parseInt(event.amount);
     calculData();
     saveData();
@@ -138,7 +158,7 @@ window.addEventListener('onEventReceived', function (obj) {
 
   // Traitement tips
   if (listener == 'tip-latest') {
-    //debugger;
+    if (debugMode) debugger;
     widgetData.tips += parseInt(event.amount);
     calculData();
     saveData();
@@ -146,8 +166,16 @@ window.addEventListener('onEventReceived', function (obj) {
   }
 });
 
+
+window.addEventListener('onSessionUpdate', function (obj) {
+  if (debugMode) debugger;
+  console.log(obj);
+  SEdataUpdated = obj.detail.session;
+  // log('session-update', SEdataUpdated);
+});
+
 function calculData() {
-  //debugger;
+  if (debugMode) debugger;
   // Calcul $ cheer
   widgetData.cheersDollars = round(widgetData.cheers * widgetData.dollarsByCheers);
   // calcul subpoints
@@ -176,7 +204,7 @@ function calculData() {
 
 
 function saveData(forceDate) {
-  //debugger;
+  if (debugMode) debugger;
   if (forceDate === undefined) {
     widgetData.dateLastWrite = new Date();
   } else {
@@ -196,7 +224,7 @@ function sendMessage(message, data) {
 function updateUi() {
   //    console.log(widgetData);
   //    return;
-  //debugger;
+  if (debugMode) debugger;
   // Affichage des données non modifiable
   $('#subPointStat').text(widgetData.subPoints);
   $('#totalSubsStat').text(widgetData.totalSubs);
@@ -226,12 +254,67 @@ function updateUi() {
   $('#dollarsByCheers').val(widgetData.dollarsByCheers);
 }
 
+function log(listener, data) {
+  if (listener != 'event:test' && listener != 'kvstore:update') {
+    $('#log').val($('#log').val() + new Date().toISOString() + '\t' + listener + '\t' + JSON.stringify(data) + '\n');
+    scrollDown('#log');
+    logsArray.push({
+      'listerner': listerner,
+      'data': data
+    })
+  }
+}
+
+function logGift(data) {
+  let txt = new Date().toISOString() + '\t' + data.name + '\t' + data.amount + '\t' + data.tier + '\t';
+  $('#logGift').val($('#logGift').val() + txt + '\n');
+  scrollDown('#logGift');
+}
+
+function logSub(data) {
+  let txt = new Date().toISOString() + '\t' + data.name + '\t' + data.amount + '\t' + data.tier + '\t';
+  if (data.gifted) {
+    txt += 'Oui\t' + data.sender;
+  } else {
+    txt += 'Non\t';
+  }
+  $('#logSub').val($('#logSub').val() + txt + '\n');
+  scrollDown('#logSub');
+}
+
+function scrollDown(elString) {
+  let el = $(elString)[0];
+  el.scrollTop = el.scrollHeight;
+}
+
 function round(nombre) {
   return Math.round((nombre + Number.EPSILON) * 100) / 100;
 }
 
+/*
+ Synchronise les données du widget avec les données de streamElements
+ */
 function synchronise() {
-
+  if (debugMode) debugger;
+  /*
+  let url = 'https://api.streamelements.com/kappa/v2/sessions/' + channelName;
+  fetch(url, {
+    method: 'GET',
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + APIToken
+    },
+    mode: 'cors',
+    cache: 'no-cache'
+  }).then((response) => {
+    if (debugMode) debugger;
+    console.log(response);
+  }).catch((error) => {
+    if (debugMode) debugger;
+    console.log(error);
+  });
+  */
+  //if (widgetData.totalSubs != SEdataUpdated)
 }
 
 /* Interactivité */
@@ -264,4 +347,8 @@ $("#reset").click(function () {
   calculData();
   saveData();
   updateUi();
+});
+
+$("#synchronise").click(() => {
+  synchronise();
 });
