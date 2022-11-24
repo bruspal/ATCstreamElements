@@ -1,5 +1,20 @@
 // Mode debug mettre true pour activer le mode debug, mettre false sinon
-let debugMode = true;
+let debugMode = false;
+const version = "6.1";
+
+/*
+Handle des erreurs
+*/
+window.addEventListener("error", (event) => {
+  debugger;
+  errObj = {
+    type: event.type,
+    filename: event.filename,
+    linecol: event.lineno + ':' + event.colno,
+    message: event.message
+  };
+  log('js-message:' + event.type, errObj);
+});
 
 // Principe : Tour de controle qui pilote l'affichage
 // * tout stocker dans SE_API.store
@@ -12,8 +27,13 @@ let APIToken = '';
 let channelName = '';
 let logsArray = [];
 
+
 // Gestion des timeouts
 let timeoutUpdate = false;
+let timeoutSave = false;
+
+// Gestion des interval
+let intervalAutosaveBackup = 60; // interval autosave en secondes
 
 // A mettre en fields
 let instanceName = 'touristATC';
@@ -69,7 +89,11 @@ window.addEventListener('onWidgetLoad', function (obj) {
   fields = obj.detail.fieldData;
   APIToken = obj.detail.channel.apiToken;
   channelName = obj.detail.channel.username;
+  instanceName = fields.instanceName;
+  intervalAutosaveBackup = fields.intervalAutosaveBackup;
 
+  $('#instanceNameStat').text(instanceName);
+  $('#versionStat').text(version);
   /*
   console.log(SEdata);
   console.log(fields);
@@ -98,12 +122,6 @@ window.addEventListener('onWidgetLoad', function (obj) {
     $('#logSub').val('Date\tNom\tNb mois\tType\tgift\tgifteur\r\n');
 
     $('#loading').fadeOut();
-    // On demande un refresh aux widgets lié
-    /*
-    if(debugMode) debugger;
-    let eventName = instanceName+'_refresh';
-    SE_API.sendMessage(eventName, true).then((ret) => {console.log(ret)});
-    */
   });
 });
 
@@ -221,14 +239,58 @@ function saveData(forceDate) {
   } else {
     widgetData.dateLastWrite = forceDate;
   }
-  SE_API.store.set(instanceName, widgetData);
-  // On envois le message 'update' 500ms apres le dernier event
-  if (timeoutUpdate !== false) clearTimeout(timeoutUpdate);
-  timeoutUpdate = setTimeout(() => {
-    sendMessage('update', {'truc': 'pwet'}, {'opt': 'ion'});
-  }, 1000);
+  if (timeoutSave !== false) clearTimeout(timeoutSave);
+  timeoutSave = setTimeout(() => {
+    log('save-data:saving', widgetData);
+    SE_API.store.set(instanceName, widgetData).then(() => {
+      log('save-data:saved', widgetData);
+      // On envois le message 'update' 500ms apres le dernier event
+      if (timeoutUpdate !== false) clearTimeout(timeoutUpdate);
+      timeoutUpdate = setTimeout(() => {
+        sendMessage('update', widgetData);
+      }, fields.timeoutUpdate);
+    });
+  }, fields.timeoutSave);
 }
 
+/*
+ * Auto sauvegarde du backup
+ */
+function saveBackup() {
+  if (typeof saveBackup.timer == 'undefined') {
+      saveBackup.timer = intervalAutosaveBackup;
+  }
+  $('#nextAutosaveStat').text(saveBackup.timer);
+  if (--saveBackup.timer == 0) {
+    log('backup:saving', widgetData);
+    SE_API.store.set(instanceName+'_autosavebackup', widgetData).then(() => {
+      log('backup:saved', widgetData);
+    });
+    saveBackup.timer = intervalAutosaveBackup;
+  };
+}
+setInterval(saveBackup, 1000);
+
+/*
+ * Resturation du dernier backup
+ */
+function restaureBackup() {
+  log('backup:restoring', {});
+  $('#loading').show();
+  SE_API.store.get(instanceName+'_autosavebackup').then((ret) => {
+    if (ret === null) {
+      log('backup:no-backup-found', {});
+    } else {
+      widgetData = ret;
+      log('backup:restored', widgetData);
+      updateUi();
+      saveData();
+    }
+    $('#loading').fadeOut();
+  });
+}
+
+//setInterval(function)
 /*
 Envois un message (HACK de SE_API.store.set)
 */
@@ -237,11 +299,15 @@ function sendMessage(message, data, options) {
   options = options || {};
   data = data || {};
   message = instanceName + '_' + message;
-  SE_API.store.set(message, {
-    custom: true,
+  let objMessage = {
+    timestamp: Date.now(),
     payload: data,
     'options': options
-  })
+  };
+  log('custom-message-sending:' + message, objMessage);
+  SE_API.store.set(message, objMessage).then(() => {
+    log('custom-message-sent:' + message, objMessage);
+  });
 }
 
 /*
@@ -353,8 +419,8 @@ function synchronise() {
   if (debugMode) debugger;
   let updated = false;
   /*
-  SEdataUpdated["subscriber-recent"] = dataDebug;
-  SEdataUpdated['subscriber-month'].count = 25;
+    SEdataUpdated["subscriber-recent"] = dataDebug;
+    SEdataUpdated['subscriber-month'].count = 25;
   */
   if (widgetData.totalSubs != SEdataUpdated['subscriber-month'].count) {
     // On met a jour tous les subs en T1 puis on déplace
@@ -440,5 +506,14 @@ $("#reset").click(function () {
 
 // Syncronise
 $("#synchronise").click(() => {
-  synchronise();
+  // synchronise();
+});
+
+// Envois du message
+$('#updateMessage').click(() => {
+  sendMessage('update', widgetData);
+});
+
+$('#restaureBackup').click(() => {
+  restaureBackup();
 });

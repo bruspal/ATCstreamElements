@@ -19,28 +19,14 @@
                 <label>$ Total</label><span class="displayValue" id="totalDollarsStat">0</span><br>
                 <label>% Objectif</label><span class="displayValue" id="objectifPercentStat">0</span>
             </td>
-        </tr>
-    </table>
-
-    <button type="button" id="updateGoal">Mettre à jour</button>
-    <button type="button" id="reset">Reset</button>
-    <button type="button" id="synchronise">Synchronise</button>
-    <button type="button" id="updateMessage">Update Bar</button>
-    <hr>
-    <table>
-        <tr>
-            <th><h2>Stats</h2></th>
-            <th>Subs</th>
-            <th>Gifteurs</th>
-        </tr>
-        <tr>
             <td>
+                <h2>Infos</h2>
                 <table>
-                    <thead>
-                        <th>Données</th>
-                        <th>Nombre</th>
-                    </thead>
                     <tbody>
+                        <tr>
+                            <td>Instance</td>
+                            <td><span class="displayValue" id="instanceNameStat">0</span></td>
+                        </tr>
                         <tr>
                             <td>subPoint</td>
                             <td><span class="displayValue" id="subPointStat">0</span></td>
@@ -53,23 +39,44 @@
                             <td>montant Subs</td>
                             <td><span class="displayValue" id="subDollarsStat">0</span></td>
                         </tr>
+                        <tr>
+                            <td>Prochain save backup</td>
+                            <td><span class="displayValue" id="nextAutosaveStat">0</span> s</td>
+                        </tr>
                     </tbody>
                 </table>
-            </td>
-            <td>
-                <textarea id="logSub" cols="45" rows="10"></textarea>
-            </td>
-            <td>
-                <textarea id="logGift" cols="45" rows="10"></textarea>
-            </td>
-        </tr>
-        <tr>
-            <th colspan="3">Log</th>
-        </tr>
-        <tr>
-            <td colspan="3">
-                <textarea id="log" cols="115" rows="10"></textarea>
+
             </td>
         </tr>
     </table>
+
+    <button type="button" id="updateGoal">Mettre à jour</button>
+    <button type="button" id="reset">Reset</button>
+    <button type="button" id="updateMessage">Envoyer message 'update'</button>
+    <button type="button" id="restaureBackup">Restaure backup</button>
+    <button type="button" id="synchronise">Synchronise (Désactivé)</button>
+    <hr>
+    <table>
+        <tr>
+            <th>Subs</th>
+            <th>Gifteurs</th>
+        </tr>
+        <tr>
+            <td>
+                <textarea id="logSub" cols="60" rows="10"></textarea>
+            </td>
+            <td>
+                <textarea id="logGift" cols="60" rows="10"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2">Log</th>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <textarea id="log" cols="120" rows="10"></textarea>
+            </td>
+        </tr>
+    </table>
+    <div>Version : <span id="versionStat"></span></div>
 </div>

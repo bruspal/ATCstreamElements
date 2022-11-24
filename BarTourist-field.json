@@ -1,4 +1,9 @@
 {
+    "instanceName": {
+        "type": "text",
+        "label": "Nom de l'instance",
+        "value": "daTouriste"
+    },
     "bar_width": {
         "type": "number",
         "label": "Largeur de la barre",

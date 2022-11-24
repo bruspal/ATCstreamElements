@@ -1,7 +1,22 @@
 {
     "instanceName": {
         "type": "text",
-        "label": "Nom de l'instance (placeholder)",
+        "label": "Nom de l'instance",
         "value": "daTouriste"
-    }
+    },
+ 	"timeoutUpdate": {
+  		"type": "number",
+  		"label": "Délais d'envois message de mise a jour des widgets liés (en ms)",
+  		"value": 1000
+	},
+ 	"timeoutSave": {
+  		"type": "number",
+  		"label": "Délais de sauvegarde des données dans la DB SE (en ms)",
+  		"value": 100
+	},
+	"intervalAutosaveBackup": {
+		"type": "number",
+		"label": "Interval (en seconde) entre 2 sauvegarde backup",
+		"value": 60
+	}
 }

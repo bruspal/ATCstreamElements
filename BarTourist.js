@@ -1,15 +1,19 @@
-
+/* modeDebug = true pour passer en mode debug (TODO : Passer ça en field ? ou en coche ) */
 const modeDebug = false;
 debugger;
 
+let fields = null;
+
 let widgetData = null;
-let instanceName = 'touristATC';
+let instanceName = '';
 
 /*
  * Widget INIT
  */
 window.addEventListener('onWidgetLoad', function (obj) {
   if (modeDebug) debugger;
+  fields = obj.detail.fieldData;
+  instanceName = fields.instanceName;
   loadData().then(() => {
     reloadGoal();
   });
@@ -17,11 +21,11 @@ window.addEventListener('onWidgetLoad', function (obj) {
 
 
 // On attache le message de mise à jour de la barre
-receiveMessage('update', () => {
+
+receiveMessage('update', (payload) => {
   if (modeDebug) debugger;
-  loadData().then(() => {
-    reloadGoal();
-  });
+  widgetData = payload;
+  reloadGoal();
 });
 
 /*
@@ -53,9 +57,12 @@ window.addEventListener('onEventReceived', function (obj) {
 Load data
 */
 function loadData() {
+  console.log(new Date().toLocaleString()+' : loading-data');
   if (modeDebug) debugger;
   return SE_API.store.get(instanceName).then((ret) => {
     if (modeDebug) debugger;
+    console.log(new Date().toLocaleString()+' : data-loaded');
+    console.log(ret);
     if (ret === null) {
       alert('NO DATA');
     } else {
@@ -90,18 +97,20 @@ Attache du code a la recetion d'un message
 function receiveMessage(message, callback) {
   window.addEventListener('onEventReceived', function (obj) {
     const listener = obj.detail.listener;
-    const messageName = obj["detail"]["event"]["data"]["key"];
-    let messageStr = instanceName + '_' + message;
-    if (listener == 'kvstore:update' && ('customWidget.' + messageStr) == messageName) {
-      if (modeDebug) debugger;
-      SE_API.store.get(messageStr).then((ret) => {
-        if (modeDebug) debugger;
-        if (ret === null) {
-          // quedalle
-        } else {
-          callback(ret.payload, ret.options);
-        }
-      });
+    if (listener == 'kvstore:update') {
+      const messageName = obj.detail.event.data.key;
+      let messageStr = instanceName + '_' + message;
+      if (('customWidget.' + messageStr) == messageName) {
+      	if (modeDebug) debugger;
+        SE_API.store.get(messageStr).then((ret) => {
+          if (modeDebug) debugger;
+          if (ret === null) {
+            // quedalle
+          } else {
+            callback(ret.payload, ret.options);
+          }
+        });
+      }
     }
   });
 }
