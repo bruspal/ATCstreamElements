@@ -12,7 +12,7 @@ Permet de creer un sprite a partir d'une spritesheet et d'y attacher des animati
 ## option constructeurs :
 | option | Obligatoire | defaut | role |
 |-|-|-|-|
-|`imgUrl`| Oui | - | lien vers la spritesheet url ou `data::` encodé base 64|
+|`img`| Oui | - | lien vers la spritesheet url ou `data::` encodé base 64|
 |`selector` | Oui | - | Nom de l'element div qui va recevoire le sprite, si il existe, on utilise ce div sinon on va cré un unique element à la fin du document. |
 |`rows`| Oui | - | Nombre de ligne de sprites dans la spritesheet |
 |`cols`| Oui | - | Nombre de colonne de sprites dans la spritesheet |
@@ -31,7 +31,7 @@ Par exemple pour un spritesheet de 4 colonnes et 3 lignes la numérotation sera 
 ## Exemple
 ```js
 var sprite = new TilesAnime({
-    imgUrl : 'assets/sprites_test.png',
+    img : 'assets/sprites_test.png',
     selector: '#sprite',
     rows: 3,
     cols: 4,
@@ -53,8 +53,8 @@ sprite.setAnimation('animationName'[, options]);
 | option | Obligatoire | defaut | role |
 |-|-|-|-|
 |`fps` | Non | `10` | fps de l'animation |
-|`cycle` | Non | `'cycling'` | type d'animation voir detail |
-|`cycleCount`| Non | 1 | nombre de fois ou l'animation cycle lorsque cycle vaut 'once' ou 'reverseOnce' |
+|`count`| Non | 0 | nombre de fois ou l'animation cycle, si omis ou 0 l'animation cycle indéfiniment |
+|`reverse`| Non | false | Definie si l'animation doit être en reverse ou non |
 |`then`| Non | - | Animation a jouer apres la fin de l'animation pour les animations dont `cycle` vaut 'once' ou 'reverseOnce'. **Si `then` n'est pas définie, l'animation s'arrete** |
 
 ### Gestion des frames de l'animation
@@ -105,7 +105,7 @@ sprite.setAnimation('animName4', {
 sprite.setAnimation('animName5', {
     fps : 10,
     col : 0,
-    cycle : 'once',
+    count : 1,
     then : {
         anim : 'animName1',
         options : {
@@ -114,17 +114,6 @@ sprite.setAnimation('animName5', {
     }
 });
 ```
-
-
-### Valeurs de cycle        
-|Valeur|Type|
-|-|-|
-|`'cycling'` | L'animation tourne en boucle |
-|`'count'` | L'animation s'execute N fois |
-|`'reverse'` | boucle l'alimation en reverse |
-|`'reverseCount'` | boucle l'animation en reverse N fois |
-
-Pour les cycles `'count'` et `'reverseCount'` N prend la valeur de `cycleCount`, si `cycleCount` est absent N = 1.
 
 # delAnimation()
 Suppresion d'une anim identifié par son nom.
