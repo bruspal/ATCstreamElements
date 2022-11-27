@@ -8,6 +8,15 @@ class brsSpriteTiles {
         this.setConstOptions(constructorOptions, 'selector');
         this.setConstOptions(constructorOptions, 'rows');
         this.setConstOptions(constructorOptions, 'cols');
+        // Parametre optionnel
+        // Decallage
+        this.offsetX = constructorOptions.offsetX || 0;
+        this.offsetY = constructorOptions.offsetY || 0;
+        // Crop
+        this.cropTop = constructorOptions.cropTop || 0;
+        this.cropBottom = constructorOptions.cropBottom || 0;
+        this.cropLeft = constructorOptions.cropLeft || 0;
+        this.cropRight = constructorOptions.cropRight || 0;
 
         // objet recevant la liste des animations créé par createAnimation().
         this.animationList = {};
@@ -44,8 +53,8 @@ class brsSpriteTiles {
         for (y = 0; y < this.rows; y++) {
             for (x = 0; x < this.cols; x++) {
                 this.tilesList.push([
-                    x * this.tileWidth,
-                    y * this.tileHeight
+                    (x + this.offsetX) * this.tileWidth,
+                        (y + this.offsetY) * this.tileHeight
                 ]);
             }
         }
@@ -57,7 +66,8 @@ class brsSpriteTiles {
             ...{
                 fps: 10,
                 count: 0,
-                reverse: false
+                reverse: false,
+                pingpong: false
             },
             ...options
         }
@@ -84,6 +94,13 @@ class brsSpriteTiles {
         // Gestion du reverse
         if (options.reverse) {
             framesList.reverse();
+        }
+        // Gestion pingpong
+        if (options.pingpong) {
+            let normal = [...framesList];
+            normal.pop();
+            let reversed = [...framesList.reverse()];
+            framesList = normal.concat(reversed);
         }
         // Gestion des répétition
         if (options.count == 0) {
@@ -129,6 +146,16 @@ class brsSpriteTiles {
         this.animationList[animationName] = options;
     }
 
+    stopAnimation() {
+        clearInterval(this.frameInterval);
+        setTimeout(() => this.activeFrame = 0, 1);
+    }
+
+    startAnimation(animationName, options) {
+        this.activeFrame = 0;
+        runAnimation(animationName, options);
+    }
+
     /* Lance l'animation */
     runAnimation(animationName, options) {
         // controle anim existe
@@ -143,7 +170,6 @@ class brsSpriteTiles {
         this.framesList = localOptions.framesList;
 
         if (this.frameInterval) clearInterval(this.frameInterval);
-        this.activeFrame = 0;
 
         this.frameInterval = setInterval(() => {
             if ( ! localOptions.loop && this.activeFrame == 0) {
