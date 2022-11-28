@@ -199,34 +199,9 @@ let audioTrain = null;
 
 // Init + gestion anim CSS
 document.addEventListener('DOMContentLoaded', () => {
-    debugger;
+    // debugger;
     train = document.getElementById('sprite');
-    /*
-    const runAnimBtn = document.getElementById('runAnim');
-    runAnimBtn.addEventListener('click', () => {
-      train.classList.replace('inactive', 'zoom');
-    })
-    */
-
     train.addEventListener("animationend", () => {train.classList.replace('zoom', 'inactive');}, false);
-    /*
-      train.addEventListener("animationstart", listener, false);
-      train.addEventListener("animationiteration", listener, false);
-      function listener(event) {
-        switch(event.type) {
-          case "animationstart":
-            console.log(`Started: elapsed time is ${event.elapsedTime}`);
-            break;
-          case "animationend":
-            console.log(`Ended: elapsed time is ${event.elapsedTime}`);
-            train.classList.replace('zoom', 'inactive');
-            break;
-          case "animationiteration":
-            console.log(`New loop started at time ${event.elapsedTime}`);
-            break;
-        }
-      }
-    */
 })
 
 
