@@ -53,8 +53,8 @@ class brsSpriteTiles {
         for (y = 0; y < this.rows; y++) {
             for (x = 0; x < this.cols; x++) {
                 this.tilesList.push([
-                    (x + this.offsetX) * this.tileWidth,
-                        (y + this.offsetY) * this.tileHeight
+                    Math.round((x + this.offsetX) * this.tileWidth),
+                        Math.round((y + this.offsetY) * this.tileHeight)
                 ]);
             }
         }
@@ -121,14 +121,15 @@ class brsSpriteTiles {
         this.tileWidth = event.target.naturalWidth / this.cols;
 
         // Récupération du selecteur qui contiendra le sprite et pamaétrage de celui-ci
-        this.element.style['height'] = this.tileHeight;
-        this.element.style['width'] = this.tileWidth;
+        this.element.style['height'] = this.tileHeight+"px";
+        this.element.style['width'] = this.tileWidth+"px";
         this.element.style['background-image'] = `url('${this.imgSrc}')`;
         this.element.style['background-attachment'] = 'fixed';
         this.element.style['background-position-x'] = '0px';
         this.element.style['background-position-y'] = '0px';
         this.element.style['background-origin'] = 'unset';
         this.element.style['background-repeat'] = 'no-repeat';
+        this.element.style['image-rendering'] = 'pixelated';
 
         // on calcul les coordonnées des différentes tiles
         this.computeTilesList();
@@ -176,6 +177,12 @@ class brsSpriteTiles {
                 localOptions.innerCounter--;
                 if (localOptions.innerCounter == 0) {
                     clearInterval(this.frameInterval);
+                    // on passe à l'anim suivante si then est défini
+                    if ('then' in localOptions) {
+                        let nextAnim = localOptions.then.animation;
+                        let nextOptions = localOptions.then.options || {};
+                        this.startAnimation(nextAnim, nextOptions)
+                    }
                 }
             }
 
@@ -186,24 +193,6 @@ class brsSpriteTiles {
         }, 1000 / localOptions.fps);
     }
 
-}
 
-
-function TilesAnim() {
-    this.activeFrame = 0;
-    let spriteElem = document.getElementById('sprite');
-    spriteElem.style['background-position-x'] = "0px";
-    let xInc = 140;
-    let yInc = 199;
-    let xPos = 0;
-    let yPos = 0;
-
-    frameInterval = setInterval(() => {
-        xPos += xInc
-        if (xPos >= (xInc * 4)) {
-            xPos = 0;
-        }
-        spriteElem.style['background-position-x'] = (xPos * -1) + "px";
-    }, 100);
 }
 
