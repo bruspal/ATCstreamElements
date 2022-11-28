@@ -1,0 +1,57 @@
+{
+  "spritesSheetUrl": {
+    "type": "text",
+    "label": "URL de l'image spritesSheet",
+    "value": ""
+  },
+  "spritesSheetRows": {
+    "type": "number",
+    "label": "Nombre de lignes de la spriteSheet",
+    "value": 1
+  },
+  "spritesSheetCols": {
+    "type": "number",
+    "label": "Nombre de colonnes de la spriteSheet",
+    "value": 8
+  },
+  "animFps": {
+    "type": "number",
+    "label": "FPS frame",
+    "value": 10
+  },
+  "animeDuration": {
+    "type": "number",
+    "label": "Durée de l'anime en seconde",
+    "value": 10
+  },
+  "posStart": {
+    "type": "text",
+    "label": "position au demarrage en unité CSS (px, %, ...)",
+    "value": "1000px"
+  },
+  "posStop": {
+    "type": "text",
+    "label": "position a la fin en unité CSS (px, %, ...)",
+    "value": "-2680px"
+  },
+  "cubicBezier": {
+    "type": "text",
+    "label": "CSS3 animation-timing-function",
+    "value": "cubic-bezier(0.5, 0.1, 1, 0.1)"
+  },
+  "percentFadeOut": {
+    "type": "number",
+    "label": "% de l'anim a partir duquelle commence le fadeout",
+    "value": 75
+  },
+  "audioUrl": {
+    "type": "text",
+    "label": "URL du fichier audio",
+    "value": ""
+  },
+  "audioVolume": {
+    "type": "number",
+    "label": "Volume audio entre 0 et 1",
+    "value": 1
+  }
+}
