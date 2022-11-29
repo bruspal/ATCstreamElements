@@ -124,7 +124,7 @@ class brsSpriteTiles {
         this.element.style['height'] = this.tileHeight+"px";
         this.element.style['width'] = this.tileWidth+"px";
         this.element.style['background-image'] = `url('${this.imgSrc}')`;
-        this.element.style['background-attachment'] = 'fixed';
+        this.element.style['background-attachment'] = 'local';
         this.element.style['background-position-x'] = '0px';
         this.element.style['background-position-y'] = '0px';
         this.element.style['background-origin'] = 'unset';
