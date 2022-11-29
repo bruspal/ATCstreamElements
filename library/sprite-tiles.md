@@ -14,8 +14,10 @@ Permet de creer un sprite a partir d'une spritesheet et d'y attacher des animati
 |-|-|-|-|
 |`img`| Oui | - | lien vers la spritesheet url ou `data::` encodé base 64|
 |`selector` | Oui | - | Nom de l'element div qui va recevoire le sprite, si il existe, on utilise ce div sinon on va cré un unique element à la fin du document. |
-|`rows`| Oui | - | Nombre de ligne de sprites dans la spritesheet |
-|`cols`| Oui | - | Nombre de colonne de sprites dans la spritesheet |
+|`rows`| Oui | - | Nombre de ligne de sprites dans la spritesheet (A implementer) |
+|`cols`| Oui | - | Nombre de colonne de sprites dans la spritesheet (A implementer) |
+|`offset`| Non | 0 | Offset de tiles offset.x, offset.y (A implementer) |
+|`crop`| Non | 0 | Crop de tiles crop.top, crop.bottom, crop.left, crop.right (A implementer) |
 
 ## Numerotation des frames
 Les frames sont numéroté en partant d'en haut a gauche et en allant de la gauche vers la droite et du haut vers le bas.
@@ -54,7 +56,8 @@ sprite.setAnimation('animationName'[, options]);
 |-|-|-|-|
 |`fps` | Non | `10` | fps de l'animation |
 |`count`| Non | 0 | nombre de fois ou l'animation cycle, si omis ou 0 l'animation cycle indéfiniment |
-|`reverse`| Non | false | Definie si l'animation doit être en reverse ou non |
+|`reverse`| Non | false | Si mis a `true` joue l'animation en reverse |
+|`reverse`| Non | false | Si mis a `true` joue l'animation en ping-pong |
 |`then`| Non | - | Animation a jouer apres la fin de l'animation pour les animations dont `cycle` vaut 'once' ou 'reverseOnce'. **Si `then` n'est pas définie, l'animation s'arrete** |
 
 ### Gestion des frames de l'animation
@@ -107,7 +110,7 @@ sprite.setAnimation('animName5', {
     col : 0,
     count : 1,
     then : {
-        anim : 'animName1',
+        animation : 'animName1',
         options : {
             fps: 25
         }
