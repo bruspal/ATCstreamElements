@@ -210,12 +210,11 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('onEventReceived', function (obj) {
     const listener = obj.detail.listener;
     const event = obj.detail.event;
-    log(listener, event);
     if (listener == 'message') {
         debugger;
         let speaker = event.data.nick;
         let text = event.data.text;
-        if (text == 'touristePORCO Tous à bord... Le train de la HYPE entre en gare !') {
+        if (text.includes(fields.chatMessage) && speaker == fields.chatUser) {
             triggerTrain();
         }
     }
@@ -223,6 +222,7 @@ window.addEventListener('onEventReceived', function (obj) {
 
 // Init du widget
 window.addEventListener('onWidgetLoad', function (obj) {
+    // debugger;
     SEdata = obj.detail.session.data;
     fields = obj.detail.fieldData;
 
@@ -231,10 +231,11 @@ window.addEventListener('onWidgetLoad', function (obj) {
         //imgSrc: 'https://cdn.streamelements.com/uploads/1bf22b0b-037f-4f49-9ffe-0d2f9d4a1ccf.png',
         imgSrc: fields.spritesSheetUrl,
         selector: '#sprite',
-        rows: 1,
-        cols: 8
+        rows: fields.spritesSheetRows,
+        cols: fields.spritesSheetCols
     });
-    sprite.createAnimation('idle', {from: 0, to: 3, fps: fields.animFps});
+    let numberFrames = (fields.spritesSheetRows * fields.spritesSheetCols) - 1;
+    sprite.createAnimation('idle', {from: 0, to: numberFrames, fps: fields.animFps});
     sprite.runAnimation('idle');
 
     audioTrain = new Audio(fields.audioUrl);

@@ -16,7 +16,7 @@
   },
   "animFps": {
     "type": "number",
-    "label": "FPS frame",
+    "label": "Frame Par seconde cycle sprite",
     "value": 10
   },
   "animeDuration": {
@@ -53,5 +53,15 @@
     "type": "number",
     "label": "Volume audio entre 0 et 1",
     "value": 1
+  },
+  "chatUser": {
+    "type": "text",
+    "label": "Utilisateur qui lance le train",
+    "value": ""
+  },
+  "chatMessage": {
+    "type": "text",
+    "label": "Message qui lance le train",
+    "value": ""
   }
 }
