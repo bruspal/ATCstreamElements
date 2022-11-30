@@ -34,6 +34,16 @@
     "label": "position a la fin en unité CSS (px, %, ...)",
     "value": "-2680px"
   },
+  "scaleStart": {
+    "type": "number",
+    "label": "Scale de départ",
+    "value": 0
+  },
+  "scaleStop": {
+    "type": "number",
+    "label": "Scale de fin",
+    "value": 15
+  },
   "cubicBezier": {
     "type": "text",
     "label": "CSS3 animation-timing-function",
@@ -43,6 +53,16 @@
     "type": "number",
     "label": "% de l'anim a partir duquelle commence le fadeout",
     "value": 75
+  },
+  "opacityStart": {
+    "type": "number",
+    "label": "Opacité depart",
+    "value": 1
+  },
+  "opacityStop": {
+    "type": "number",
+    "label": "Opacite de fin",
+    "value": 0
   },
   "audioUrl": {
     "type": "text",

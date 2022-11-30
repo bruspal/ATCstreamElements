@@ -16,16 +16,16 @@ animation-timing-function: {{cubicBezier}};
 
 @keyframes hypeTrain {
     from {
-        transform: scale(0);
-        opacity: 1;
+transform: scale({{scaleStart}});
+opacity: {{opacityStart}};
 top: {{posStart}};
 }
 {{percentFadeOut}}% {
-    opacity: 1;
+opacity: {{opacityStart}};
 }
 to {
-    transform: scale(15);
-    opacity: 0%;
+transform: scale({{scaleStop}});
+opacity: {{opacityStop}};
 top: {{posStop}};
 }
 }
