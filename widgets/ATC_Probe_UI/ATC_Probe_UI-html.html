@@ -1,0 +1,82 @@
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+<div class="main-container" style="background-color: #AAAAAA; padding: 15px; border-radius: 15px">
+    <div id="loading" style="display: none">LOADING</div>
+    <table>
+        <tr>
+            <td>
+                <label>Prime</label><input type="number" value="0" id="subPrime"><span class="displayValue" id="dollarsByPrimeStat"></span> $<br>
+                <label>Gifted</label><input type="number" value="0" id="subGifted"><span class="displayValue" id="dollarsByGiftedStat"></span> $<br>
+                <label>T1</label><input type="number" value="0" id="subT1"><span class="displayValue" id="dollarsByT1Stat"></span> $<br>
+                <label>T2</label><input type="number" value="0" id="subT2"><span class="displayValue" id="dollarsByT2Stat"></span> $<br>
+                <label>T3</label><input type="number" value="0" id="subT3"><span class="displayValue" id="dollarsByT3Stat"></span> $<br>
+                <label>Cheers</label><input type="number" value="0" id="cheers"><span class="displayValue" id="dollarsByCheersStat"></span> $<br>
+                <label>Tip</label><input type="number" value="0" id="tips"> $<br>
+            </td>
+            <td style="padding-left: 15px">
+                <label>Objectif</label><input type="number" value="0" id="objectif"><br>
+                <label>$ / subPoints</label><input type="number" value="0" id="dollarsBySubPoints"><br>
+                <label>$ / cheers</label><input type="number" value="0" id="dollarsByCheers"><br>
+                <label>$ Total</label><span class="displayValue" id="totalDollarsStat">0</span><br>
+                <label>% Objectif</label><span class="displayValue" id="objectifPercentStat">0</span>
+            </td>
+            <td>
+                <h2>Infos</h2>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Instance</td>
+                            <td><span class="displayValue" id="instanceNameStat">0</span></td>
+                        </tr>
+                        <tr>
+                            <td>subPoint</td>
+                            <td><span class="displayValue" id="subPointStat">0</span></td>
+                        </tr>
+                        <tr>
+                            <td>Total subs</td>
+                            <td><span class="displayValue" id="totalSubsStat">0</span></td>
+                        </tr>
+                        <tr>
+                            <td>montant Subs</td>
+                            <td><span class="displayValue" id="subDollarsStat">0</span></td>
+                        </tr>
+                        <tr>
+                            <td>Prochain save backup</td>
+                            <td><span class="displayValue" id="nextAutosaveStat">0</span> s</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+    <button type="button" id="updateGoal">Mettre à jour</button>
+    <button type="button" id="reset">Reset</button>
+    <button type="button" id="updateMessage">Envoyer message 'update'</button>
+    <button type="button" id="restaureBackup">Restaure backup</button>
+    <button type="button" id="synchronise">Synchronise (Désactivé)</button>
+    <hr>
+    <table>
+        <tr>
+            <th>Subs</th>
+            <th>Gifteurs</th>
+        </tr>
+        <tr>
+            <td>
+                <textarea id="logSub" cols="60" rows="10"></textarea>
+            </td>
+            <td>
+                <textarea id="logGift" cols="60" rows="10"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2">Log</th>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <textarea id="log" cols="120" rows="10"></textarea>
+            </td>
+        </tr>
+    </table>
+    <div>Version : <span id="versionStat"></span></div>
+</div>
