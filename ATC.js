@@ -1,12 +1,25 @@
 // Mode debug mettre true pour activer le mode debug, mettre false sinon
 let debugMode = false;
-const version = "6.1";
+const version = "6.2";
+
+/* ATC flag */
+let ATCLocked = false; // ATC is locked
+let ATCEditorMode = false; // ATC is open in editor
+let ATCMuted = false; // ATC is mutted
+
+// SET SE Flags
+SE_API.getOverlayStatus().then(status => {
+  debugger;
+  ATCEditorMode = status.isEditorMode;
+  ATCMuted = status.muted;
+  console.log(status);
+});
+
 
 /*
 Handle des erreurs
 */
 window.addEventListener("error", (event) => {
-  debugger;
   errObj = {
     type: event.type,
     filename: event.filename,
@@ -73,6 +86,48 @@ let widgetData = {
   dollarsByCheers: 0,
   dateLastWrite: new Date()
 };
+/*
+ * Multi instance and lock managment
+ */
+/* unikId instance */
+let unikId = '';
+do {
+  unikId = (Math.random() + 1).toString(36).substring(2)+(Math.random() + 1).toString(36).substring(2);
+} while(unikId == '');
+
+// On 'ATCPing' message from another instance
+receiveMessage('ATCPing', (data) => {
+  debugger;
+  if (ATCLocked) return;
+  if (data.unikId != unikId) { // Filter to ignore self ping
+    setTimeout(() => {
+      sendMessage('ATCDisable', data);
+    }, 500);
+  }
+})
+
+// On 'ATCDisable' message from another instance
+receiveMessage('ATCDisable', (data) => {
+  debugger;
+  if (ATCLocked) return;
+  if (data.unikId == unikId) { // Filter to work on self unikId
+    disableATC();
+  }
+});
+
+/* Disable ATC */
+function disableATC() {
+  ATCLocked = true;
+  $('#locked').show();
+}
+
+/* Enable ATC */
+function enableATC() {
+  ATCLocked = false;
+  $('#locked').hide();
+}
+
+
 $('#loading').show();
 
 /*
@@ -94,10 +149,6 @@ window.addEventListener('onWidgetLoad', function (obj) {
 
   $('#instanceNameStat').text(instanceName);
   $('#versionStat').text(version);
-  /*
-  console.log(SEdata);
-  console.log(fields);
-  */
 
   // Récupération des données de la DB streamElement
   SE_API.store.get(instanceName).then((ret) => {
@@ -120,7 +171,8 @@ window.addEventListener('onWidgetLoad', function (obj) {
     $('#log').val('Date\tListener\tData\r\n');
     $('#logGift').val('Date\tNom\tQte\tType\r\n');
     $('#logSub').val('Date\tNom\tNb mois\tType\tgift\tgifteur\r\n');
-
+    // Send a ping message to detect potential other instance
+    sendMessage('ATCPing', {'unikId' : unikId});
     $('#loading').fadeOut();
   });
 });
@@ -133,6 +185,7 @@ nouveau tips : on calcul
 on sauve
 */
 window.addEventListener('onEventReceived', function (obj) {
+  if (ATCLocked) return; // widget locked ? exit
   const listener = obj.detail.listener;
   const event = obj.detail.event;
   log(listener, event);
@@ -192,7 +245,7 @@ window.addEventListener('onEventReceived', function (obj) {
  TODO : SEdata devient inutil
  */
 window.addEventListener('onSessionUpdate', function (obj) {
-  if (debugMode) debugger;
+  if (ATCLocked) return; // widget locked ? exit
   console.log(obj);
   SEdataUpdated = obj.detail.session;
   // log('session-update', SEdataUpdated);
@@ -202,15 +255,15 @@ window.addEventListener('onSessionUpdate', function (obj) {
 Calcul des valeurs en fonction des infos
 */
 function calculData() {
-  if (debugMode) debugger;
+  // Debugger;
   // Calcul $ cheer
   widgetData.cheersDollars = round(widgetData.cheers * widgetData.dollarsByCheers);
   // calcul subpoints
   widgetData.subPoints = round((widgetData.subPrime * valSubPoint.subPrime) +
-    (widgetData.subGifted * valSubPoint.subGifted) +
-    (widgetData.subT1 * valSubPoint.subT1) +
-    (widgetData.subT2 * valSubPoint.subT2) +
-    (widgetData.subT3 * valSubPoint.subT3));
+      (widgetData.subGifted * valSubPoint.subGifted) +
+      (widgetData.subT1 * valSubPoint.subT1) +
+      (widgetData.subT2 * valSubPoint.subT2) +
+      (widgetData.subT3 * valSubPoint.subT3));
   // calcul $ subPoints
   widgetData.subPointsDollars = round(widgetData.subPoints * widgetData.dollarsBySubPoint);
   // calcul $ par tiers
@@ -225,7 +278,7 @@ function calculData() {
   widgetData.totalDollars = widgetData.subPointsDollars + widgetData.cheersDollars + widgetData.tips;
   // Calcul percent objectif
   widgetData.percentObjectif = round(
-    (widgetData.totalDollars * 100) / widgetData.objectif
+      (widgetData.totalDollars * 100) / widgetData.objectif
   );
 }
 
@@ -233,6 +286,12 @@ function calculData() {
 Sauvegarde des infos dans la DB de SE
 */
 function saveData(forceDate) {
+  debugger;
+  if (ATCEditorMode) {
+    log('debug: emulated save');
+    return;
+  };
+
   if (debugMode) debugger;
   if (forceDate === undefined) {
     widgetData.dateLastWrite = new Date();
@@ -258,10 +317,15 @@ function saveData(forceDate) {
  */
 function saveBackup() {
   if (typeof saveBackup.timer == 'undefined') {
-      saveBackup.timer = intervalAutosaveBackup;
+    saveBackup.timer = intervalAutosaveBackup;
   }
   $('#nextAutosaveStat').text(saveBackup.timer);
   if (--saveBackup.timer == 0) {
+    if (ATCEditorMode) {
+      log('debug: emulated saveBackup');
+      return;
+    };
+
     log('backup:saving', widgetData);
     SE_API.store.set(instanceName+'_autosavebackup', widgetData).then(() => {
       log('backup:saved', widgetData);
@@ -275,6 +339,11 @@ setInterval(saveBackup, 1000);
  * Resturation du dernier backup
  */
 function restaureBackup() {
+  if (ATCEditorMode) {
+    log('debug: emulated restore backup');
+    return;
+  };
+
   log('backup:restoring', {});
   $('#loading').show();
   SE_API.store.get(instanceName+'_autosavebackup').then((ret) => {
@@ -295,7 +364,6 @@ function restaureBackup() {
 Envois un message (HACK de SE_API.store.set)
 */
 function sendMessage(message, data, options) {
-  if (debugMode) debugger;
   options = options || {};
   data = data || {};
   message = instanceName + '_' + message;
@@ -314,16 +382,25 @@ function sendMessage(message, data, options) {
 Attache du code a la recetion d'un message
 */
 function receiveMessage(message, callback) {
-  message = instanceName + '_' + message;
-  SE_API.store.get(message).then((ret) => {
-    if (ret === null) {
-      // queedalle
-    } else {
-      callback(ret.payload, ret.options);
+  window.addEventListener('onEventReceived', function (obj) {
+    const listener = obj.detail.listener;
+    if (listener == 'kvstore:update') {
+      const messageName = obj.detail.event.data.key;
+      let messageStr = instanceName + '_' + message;
+      if (('customWidget.' + messageStr) == messageName) {
+        SE_API.store.get(messageStr).then((ret) => {
+          if (ret === null) {
+            log('custom-message-received : ' + messageStr + ' NO PAYLOAD');
+            // quedalle
+          } else {
+            log('custom-message-received : ' + messageStr, ret);
+            callback(ret.payload, ret.options);
+          }
+        });
+      }
     }
-  })
+  });
 }
-
 /*
 Mise a jour de l'interface
 */
@@ -365,6 +442,7 @@ Log des events dans la zone log, ignore les events de type 'kvstore:update' et '
 */
 function log(listener, data) {
   if (listener != 'event:test' && listener != 'kvstore:update') {
+    data = data || {};
     $('#log').val($('#log').val() + new Date().toISOString() + '\t' + listener + '\t' + JSON.stringify(data) + '\n');
     scrollDown('#log');
     logsArray.push({

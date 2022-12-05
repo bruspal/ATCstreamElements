@@ -1,6 +1,11 @@
 <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
 <div class="main-container" style="background-color: #AAAAAA; padding: 15px; border-radius: 15px">
     <div id="loading" style="display: none">LOADING</div>
+    <div id="locked" style="display: none">
+        <small>ATC LOCKED</small>
+        <p>Another instance has been detected !</p>
+        <button id="forceUnlock">FORCE UNLOCK. Warning unpreditable behaviour can occure !!!</button>
+    </div>
     <table>
         <tr>
             <td>
@@ -23,26 +28,26 @@
                 <h2>Infos</h2>
                 <table>
                     <tbody>
-                        <tr>
-                            <td>Instance</td>
-                            <td><span class="displayValue" id="instanceNameStat">0</span></td>
-                        </tr>
-                        <tr>
-                            <td>subPoint</td>
-                            <td><span class="displayValue" id="subPointStat">0</span></td>
-                        </tr>
-                        <tr>
-                            <td>Total subs</td>
-                            <td><span class="displayValue" id="totalSubsStat">0</span></td>
-                        </tr>
-                        <tr>
-                            <td>montant Subs</td>
-                            <td><span class="displayValue" id="subDollarsStat">0</span></td>
-                        </tr>
-                        <tr>
-                            <td>Prochain save backup</td>
-                            <td><span class="displayValue" id="nextAutosaveStat">0</span> s</td>
-                        </tr>
+                    <tr>
+                        <td>Instance</td>
+                        <td><span class="displayValue" id="instanceNameStat">0</span></td>
+                    </tr>
+                    <tr>
+                        <td>subPoint</td>
+                        <td><span class="displayValue" id="subPointStat">0</span></td>
+                    </tr>
+                    <tr>
+                        <td>Total subs</td>
+                        <td><span class="displayValue" id="totalSubsStat">0</span></td>
+                    </tr>
+                    <tr>
+                        <td>montant Subs</td>
+                        <td><span class="displayValue" id="subDollarsStat">0</span></td>
+                    </tr>
+                    <tr>
+                        <td>Prochain save backup</td>
+                        <td><span class="displayValue" id="nextAutosaveStat">0</span> s</td>
+                    </tr>
                     </tbody>
                 </table>
 
