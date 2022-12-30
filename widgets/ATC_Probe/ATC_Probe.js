@@ -1,4 +1,4 @@
-// Mode debug mettre true pour activer le mode debug, mettre false sinon
+// debugMode to 'true' to enable console debuging
 let debugMode = false;
 const version = "6.1";
 
@@ -25,7 +25,6 @@ window.addEventListener("error", (event) => {
 let SEdata = null;
 let SEdataUpdated = null;
 let fields = null;
-let APIToken = '';
 let channelName = '';
 let logsArray = [];
 
@@ -83,16 +82,12 @@ Widget Init :
 - recaler les sub dans les widgetData si necessaire.
  */
 window.addEventListener('onWidgetLoad', function (obj) {
-  if (debugMode) debugger;
-  let updateAtLaunch = false;
   SEdata = obj.detail.session.data;
   SEdataUpdated = SEdata;
   fields = obj.detail.fieldData;
-  APIToken = obj.detail.channel.apiToken;
   channelName = obj.detail.channel.username;
   instanceName = fields.instanceName;
   intervalAutosaveBackup = fields.intervalAutosaveBackup;
-
 
   // Récupération des données de la DB streamElement
   SE_API.store.get(instanceName).then((ret) => {
@@ -104,6 +99,7 @@ window.addEventListener('onWidgetLoad', function (obj) {
       widgetData.tips = SEdata['tip-month'].amount;
       calculData();
       saveData();
+      if (debugMode) log();
     } else {
       // Chargement de l'instance
       widgetData = ret;
@@ -345,7 +341,22 @@ function round(nombre) {
 }
 
 /*
- Synchronise les données du widget avec les données de streamElements
+ Reset counters to 0 then save.
+ */
+function reset () {
+  widgetData.subPrime = 0;
+  widgetData.subGifted = 0;
+  widgetData.subT1 = 0;
+  widgetData.subT2 = 0;
+  widgetData.subT3 = 0;
+  widgetData.cheers = 0;
+  widgetData.tips = 0.0;
+  calculData();
+  saveData();
+}
+
+/*
+ Synchronise counters regarding last history entries.
  */
 function synchronise() {
   if (debugMode) debugger;
@@ -402,48 +413,3 @@ function synchronise() {
     // alert('rien à synchroniser');
   }
 }
-
-/* Interactivité */
-// Update
-$("#updateGoal").click(function () {
-  widgetData.subPrime = parseInt($("#subPrime").val());
-  widgetData.subGifted = parseInt($("#subGifted").val());
-  widgetData.subT1 = parseInt($("#subT1").val());
-  widgetData.subT2 = parseInt($("#subT2").val());
-  widgetData.subT3 = parseInt($("#subT3").val());
-  widgetData.cheers = parseInt($("#cheers").val());
-  widgetData.tips = parseFloat($("#tips").val());
-  widgetData.objectif = parseFloat($("#objectif").val());
-  widgetData.dollarsBySubPoint = parseFloat($("#dollarsBySubPoints").val());
-  widgetData.dollarsByCheers = parseFloat($("#dollarsByCheers").val());
-  calculData();
-  saveData();
-  updateUi();
-});
-
-// reset
-$("#reset").click(function () {
-  widgetData.subPrime = 0;
-  widgetData.subGifted = 0;
-  widgetData.subT1 = 0;
-  widgetData.subT2 = 0;
-  widgetData.subT3 = 0;
-  widgetData.cheers = 0;
-  widgetData.tips = 0.0;
-  calculData();
-  saveData();
-});
-
-// Syncronise
-$("#synchronise").click(() => {
-  // synchronise();
-});
-
-// Envois du message
-$('#updateMessage').click(() => {
-  sendMessage('update', widgetData);
-});
-
-$('#restaureBackup').click(() => {
-  restaureBackup();
-});
